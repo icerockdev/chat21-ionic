@@ -7,7 +7,9 @@ import { ResetpwdPage } from '../../authentication/resetpwd/resetpwd';
 // services
 import { AuthService } from '../../../providers/auth-service';
 import { URL_DASHBOARD, BASE_URL_HOSTNAME } from '../../../utils/constants';
-import { isHostname } from '../../../utils/utils';
+import {getParameterByName, isHostname} from '../../../utils/utils';
+import { UserService } from '../../../providers/user/user';
+import decodeJwt from 'jwt-decode';
 
 @Component({
   selector: 'page-login',
@@ -30,12 +32,16 @@ export class LoginPage {
     private authService: AuthService, 
     private formBuilder: FormBuilder,
     private alertCtrl: AlertController, 
-    private loadingCtrl: LoadingController
-    //private userService: UserService
+    private loadingCtrl: LoadingController,
+    private userService: UserService
   ) {
     //console.log("LOGIN PAGE");
     this.tenant = navParams.get('tenant');
     this.hostname = window.location.hostname;
+    let token = getParameterByName('token');
+    if(token) {
+      this.loginByTokenFirebase(token)
+    }
   }
 
   /**
@@ -149,5 +155,46 @@ export class LoginPage {
       });
       this.loading.present();
     }
+  }
+
+  loginByTokenFirebase(token: string){
+    this.submitAttempt = true;
+
+    this.authService.doLoginFirebaseWithToken(token)
+        .then( user => {
+          const decodedToken = decodeJwt(token);
+          this.userService.saveCurrentUserDetail(user.user.uid, '', decodedToken.claims.userName, '', decodedToken.claims.userId, decodedToken.claims.userType)
+              .then(_ => {
+                console.log('success saveCurrentUserDetail');
+                this.loading.dismiss();
+              })
+              .catch(err => {
+                console.log(err,'ERROR saveCurrentUserDetail');
+                this.authService.delete();
+              });
+          //console.log("register",user.uid, this.userService);
+          //this.userService.setCurrentUserDetails(user.uid, user.email);
+          //dismetto la modale ricarico lista conversazioni passando user
+        })
+        .catch(error => {
+          console.log(error,'ERROR LOGIN FIREBASE');
+          this.loading.dismiss().then( () => {
+            let alert = this.alertCtrl.create({
+              message: error.message,
+              buttons: [
+                {
+                  text: "Ok",
+                  role: 'cancel'
+                }
+              ]
+            });
+            alert.present();
+          });
+        });
+    this.loading = this.loadingCtrl.create({
+      dismissOnPageChange: true,
+    });
+    this.loading.present();
+
   }
 }

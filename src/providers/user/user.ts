@@ -54,11 +54,11 @@ export class UserService {
   //   return userFirebase;
   // }
 
-  saveCurrentUserDetail(uid: string, email: string, firstname: string, lastname: string){
+  saveCurrentUserDetail(uid: string, email: string, firstname: string, lastname: string, userId?: bigint, userType?: bigint){
     let timestamp = getNowTimestamp();
     console.log("saveCurrentUserDetail: ",this.urlNodeContacts, uid, firstname, lastname);
     return firebase.database().ref(this.urlNodeContacts)
-    .child(uid).set({uid:uid, email:email, firstname:firstname, lastname:lastname, timestamp:timestamp, imageurl:''})
+    .child(uid).set({uid:uid, email:email, firstname:firstname, lastname:lastname, timestamp:timestamp, imageurl:'', userId: userId, userType: userType})
   }
 
   // setCurrentUserDetails(uid, email) {

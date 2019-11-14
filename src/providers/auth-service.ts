@@ -73,7 +73,12 @@ export class AuthService {
     // });
   }
 
-
+  doLoginFirebaseWithToken(token: string): any {
+    return this.fireAuth.signInWithCustomToken(token)
+    // .then(res => {
+    //   console.log("signInWithEmailAndPassword::: ",res);
+    // });
+  }
   // Signin with Facebook
   // signInWithFacebook(): any {
   //   return this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider())

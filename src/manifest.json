@@ -1,6 +1,6 @@
 {
-  "name": "tilechat",
-  "short_name": "tilechat",
+  "name": "expay support",
+  "short_name": "chat",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{

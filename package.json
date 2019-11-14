@@ -63,6 +63,7 @@
         "ionic-angular": "3.9.4",
         "ionic-plugin-keyboard": "^2.2.1",
         "ionicons": "4.5.5",
+        "jwt-decode": "^2.2.0",
         "macos": "0.0.1",
         "material-design-icons": "^3.0.1",
         "moment": "^2.24.0",

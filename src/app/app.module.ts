@@ -118,7 +118,7 @@ const appInitializerFn = (appConfig: AppConfigProvider) => {
     LinkyModule,
     IonicModule.forRoot(MyApp,{
       appConfig: {
-        tenant:"tilechat"
+        tenant:"chat"
       }
     }),
     IonicStorageModule.forRoot({
