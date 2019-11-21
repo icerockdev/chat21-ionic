@@ -20,6 +20,7 @@ import { UploadService } from '../providers/upload-service/upload-service';
 
 import { DatabaseProvider } from '../providers/database/database';
 import { AppConfigProvider } from '../providers/app-config/app-config';
+import {UserService} from "./user/user";
 
 @Injectable()
 export class ChatConversationsHandler {
@@ -43,7 +44,8 @@ export class ChatConversationsHandler {
         public upSvc: UploadService,
         public zone: NgZone,
         public databaseProvider: DatabaseProvider,
-        public appConfig: AppConfigProvider
+        public appConfig: AppConfigProvider,
+        public userService: UserService
     ) {
         //this.FIREBASESTORAGE_BASE_URL_IMAGE = this.appConfig.getConfig().storageBucket;
     }
@@ -217,6 +219,16 @@ export class ChatConversationsHandler {
      */
     completeConversation(conv):ConversationModel{
         console.log('completeConversation',conv);
+
+        this.userService.getUserDetail(conv.recipient)
+            .then((snapshot) => {
+                const recipient = snapshot.val();
+                if (recipient) {
+                    conv.recipientUserId = recipient.userId;
+                    conv.recipientUserType = this.userService.getUserTypeName(recipient.userType);
+                }
+            });
+
         var LABEL_TU = this.translate.get('LABEL_TU')['value'];
         conv.selected = false;
         if(!conv.sender_fullname || conv.sender_fullname === 'undefined' || conv.sender_fullname.trim() === ''){

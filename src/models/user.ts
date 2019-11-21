@@ -1,5 +1,5 @@
 export class UserModel {
-  constructor( 
+  constructor(
     public uid: string,
     public email?: string,
     public firstname?: string,
@@ -10,6 +10,8 @@ export class UserModel {
     public color?: string,
     public checked?: boolean,
     public online?: boolean,
-    public decoded?: any
+    public decoded?: any,
+    public userId?: string,
+    public userType?: string,
   ) { }
 }

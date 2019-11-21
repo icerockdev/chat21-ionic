@@ -31,6 +31,10 @@ body {
     // position: absolute!important;
 }
 
+.scroll-content {
+    overflow-y: hidden!important;
+}
+
 .split-pane-visible {
     .split-pane-main {
         display: block;

@@ -35,6 +35,7 @@
           <div #avatarImage class="chat21-avatar" [style.background-image]="'url(' + conversation.image + ')'"></div>
         </ion-avatar>
         <div class="truncate" [innerHTML]="conversation.conversation_with_fullname"></div>
+        <p class="truncate" [innerHTML]="conversation.recipientUserType"></p>
         <div>
           <p [class.not-read]="conversation.is_new" class="truncate" [innerHTML]="convertMessage(conversation.last_message_text)"></p>
         </div>

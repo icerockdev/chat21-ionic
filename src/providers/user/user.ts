@@ -132,6 +132,16 @@ export class UserService {
       return ref;
     }
 
+  getUserTypeName(userType): string
+  {
+    const UserType = {
+      1: 'Customer',
+      2: 'Driver',
+      3: 'Administrator'
+    };
+    return UserType[userType] || '';
+  }
+
     getListMembers(members): UserModel[]{ 
       let arrayMembers = [];
       members.forEach(member => {
