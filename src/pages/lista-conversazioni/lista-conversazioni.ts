@@ -561,7 +561,7 @@ export class ListaConversazioniPage extends _MasterPage {
     var conversationId = conversation.uid;
     var isSupportConversation = conversationId.startsWith("support-group");
     if (!isSupportConversation) {
-      this.deleteConversation(conversationId, function (result, data) {
+      this.deleteConversation(conversation, function (result, data) {
         if (result === 'success') {
           console.log("ListaConversazioniPage::closeConversation::deleteConversation::response", data);
         } else if (result === 'error') {
@@ -618,16 +618,16 @@ export class ListaConversazioniPage extends _MasterPage {
   // delete a conversation form the personal timeline
   // more details availables at 
   // https://github.com/chat21/chat21-cloud-functions/blob/master/docs/api.md#delete-a-conversation
-  private deleteConversation(conversationId, callback) {
+  private deleteConversation(conversation, callback) {
     var that = this;
     // END - REMOVE FROM LOCAL MEMORY 
-    this.conversationsHandler.removeByUid(conversationId); // remove the item 
+    this.conversationsHandler.removeByUid(conversation.uid); // remove the item
     // END - REMOVE FROM LOCAL MEMORY 
 
     // BEGIN - REMOVE FROM REMOTE 
     // set the conversation from the isConversationClosingMap that is waiting to be closed
-    this.tiledeskConversationProvider.setClosingConversation(conversationId, true);
-    this.tiledeskConversationProvider.deleteConversation(conversationId, function(response, error) {
+    //this.tiledeskConversationProvider.setClosingConversation(conversationId, true);
+    /*this.tiledeskConversationProvider.deleteConversation(conversation.uuid, function(response, error) {
       if (error) {
         that.tiledeskConversationProvider.setClosingConversation(conversationId, false);
         callback('error', error);
@@ -635,9 +635,11 @@ export class ListaConversazioniPage extends _MasterPage {
       else {
         callback('success', response);
       }
-    });
+    });*/
+    var currentUserDetail = this.chatManager.getLoggedUser();
+    this.chatArchivedConversationsHandler.moveConversationToHistory(currentUserDetail.uid, conversation);
     // when a conversations is closed shows a placeholder background
-    if (conversationId === this.uidConvSelected) {
+    if (conversation.uid === this.uidConvSelected) {
       that.navProxy.pushDetail(PlaceholderPage, {});
     }
   }

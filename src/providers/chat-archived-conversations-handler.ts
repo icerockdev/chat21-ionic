@@ -39,8 +39,8 @@ export class ChatArchivedConversationsHandler {
 
     /**
      * inizializzo conversations handler
-     * @param tenant 
-     * @param user 
+     * @param tenant
+     * @param user
      */
     initWithTenant(tenant, loggedUser): ChatArchivedConversationsHandler {
         this.tenant = tenant;
@@ -72,7 +72,7 @@ export class ChatArchivedConversationsHandler {
 
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
     /**
-     * 1 - aggiungo alla pos 0 la nuova conversazione all'array di conversazioni 
+     * 1 - aggiungo alla pos 0 la nuova conversazione all'array di conversazioni
      * 2 - pubblico conversations:update
      * @param snapshot
      */
@@ -120,7 +120,7 @@ export class ChatArchivedConversationsHandler {
      * 1 - cerco indice conversazione da eliminare
      * 2 - elimino conversazione da array conversations
      * 3 - pubblico conversations:update
-     * @param childSnapshot 
+     * @param childSnapshot
      */
     private onSnapshotRemoved(childSnapshot) {
         // console.log("ChatArchivedConversationsHandler::onSnapshotRemoved::childSnapshot:", childSnapshot)
@@ -139,7 +139,7 @@ export class ChatArchivedConversationsHandler {
      * 2 - imposto fullname del sender concatenando nome e cognome e
      *   - aggiungo 'tu:' se il sender coincide con il loggedUser
      * 3 - imposto il tempo trascorso dell'invio dell'ultimo messaggio
-     * @param conv 
+     * @param conv
      */
     private completeConversation(conv): ConversationModel {
         //debugger;
@@ -194,7 +194,7 @@ export class ChatArchivedConversationsHandler {
 
     /**
      * calcolo il tempo trascorso da ora al timestamp passato
-     * @param timestamp 
+     * @param timestamp
      */
     private getTimeLastMessage(timestamp: string) {
         let timestampNumber = parseInt(timestamp) / 1000;
@@ -279,5 +279,23 @@ export class ChatArchivedConversationsHandler {
     getConversationByUid(conversationUid) {
         const index = searchIndexInArrayForUid(this.conversations, conversationUid);
         return this.conversations[index];
+    }
+
+    moveConversationToHistory(uidUser, conversation) {
+        var that = this;
+        const tenant = that.chatManager.getTenant();
+        const urlArchive = '/apps/' + tenant + '/users/' + uidUser + '/archived_conversations';
+        const urlCurrent = '/apps/' + this.tenant + '/users/' + this.loggedUser.uid + '/conversations';
+
+        console.log("Archive conv: ", conversation);
+        const refArchive = firebase.database().ref(urlArchive).child(conversation.uid);
+        refArchive.set(conversation);
+        const refCurrent = firebase.database().ref(urlCurrent).child(conversation.uid);
+        refCurrent.remove().then(function() {
+            console.log("Remove succeeded.")
+        })
+            .catch(function(error) {
+                console.log("Remove failed: " + error.message)
+            });
     }
 }
